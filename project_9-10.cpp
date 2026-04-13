@@ -1,4 +1,4 @@
-﻿// Вариант 8
+// Вариант 8
 
 #include <iostream>
 #include <string>
@@ -195,7 +195,44 @@ void filter(const game* games, int size, const string& title)
 }
 
 //Задание 1. Считать из текстового файла данные числового поля для моей задачи
+// Чтение из текстового файла и обновление стоимости игр
+void read_text_file(game* games, int size, const string& filename)
+{
+	setlocale(LC_ALL, "");
+	ifstream fin;
+	string title;
+	double newCost;
+	int updatedCount = 0;
 
+	fin.open(filename);
+
+	if (fin.is_open()) {
+		cout << "\nЧтение из файла" << filename << "\n";
+
+		while (fin >> title >> newCost)  // читаем название и стоимость
+		{
+			// Ищем игру с таким названием
+			for (int i = 0; i < size; i++)
+			{
+				if (strcmp(games[i].games.title, title.c_str()) == 0)
+				{
+					cout << "Обновлено: " << title
+						<< " старая цена: $" << games[i].games.cost
+						<< ", новая: $" << newCost << endl;
+					games[i].games.cost = newCost;
+					updatedCount++;
+					break;
+				}
+			}
+		}
+		cout << "Обновлено " << updatedCount << "игр\n";
+	}
+	else {
+		cout << "Файл " << filename << " не найден!" << endl;
+	}
+
+	fin.close();
+}
 
 // Задание 2. Чтение / запись своей структуры в бинарный файл
 int read_write_to_bin(game* games, int size)
@@ -226,7 +263,7 @@ int main()
 		{ {"Wolfenstein_3D_Classic", "id Software", 1, 200000, PC}, "shooter"},
 		{ {"Minecraft", "Mojang", 0, 140000000, PC}, "sandbox" },
 		{ {"CS:GO", "Valve", 0, 25000000, PC}, "shooter" },
-		{ {"GTA V", "Rockstar", 0, 170000000, gamepad}, "action" },
+		{ {"GTA_V", "Rockstar", 0, 170000000, gamepad}, "action" },
 		{ {"Among_Us", "InnerSloth", 0, 500000000, mobile}, "party" },
 		{ {"Stardew_Valley", "ConcernedApe", 0, 20000000, PC}, "simulator" },
 		{ {"Quake", "id Software", 0, 5000000, PC}, "shooter" },
@@ -258,6 +295,7 @@ int main()
 	filter(id_Software_array, id_count, "Шутеры от id Software(отсортированные)");
 	filter(mobile_all, mobile_count, "Мобильные игры");
 
+	read_text_file(games, 20, "structure.txt");
 	read_write_to_bin(games, 20);
 
 	return 0;
